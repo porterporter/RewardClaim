@@ -23,22 +23,31 @@ public class Command extends CommandBase {
     public void processCommand(ICommandSender sender, String[] args) throws CommandException {
         switch (args[0]) {
             case "id":
+                if(args.length < 2) {
+                    Utils.chat("§cMissing arguments. Usage: /claim id <id>");
+                    return;
+                }
                 new Thread(new RewardClaim().fetch(args[1])).start();
                 break;
             case "reward":
+                if(args.length < 2) {
+                    Utils.chat("§cMissing arguments. Usage: /claim reward <1|2|3>");
+                    return;
+                }
+
                 int selection = parseInt(args[1]);
-                if (selection < 0 || selection > 2) {
-                    Utils.chat("Invalid reward selection.");
+                if (selection < 1 || selection > 3) {
+                    Utils.chat("§cInvalid reward. Usage: /claim reward <1|2|3>");
                     return;
                 }
                 if (SimpleRewardClaim.SESSION == null) {
-                    Utils.chat("No session found.");
+                    Utils.chat("§No Daily Reward Session found. Try: /claim id <id> first");
                     return;
                 }
                 new Thread(SimpleRewardClaim.SESSION.claim(selection)).start();
                 break;
             default:
-                Utils.chat("Invalid command usage.");
+                Utils.chat("§Missing arguments. Usage: /claim <id|reward>");
                 break;
 
         }

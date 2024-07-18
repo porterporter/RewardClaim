@@ -1,6 +1,7 @@
 package cat.porter.simplerewardclaim.types;
 
 import com.google.gson.annotations.SerializedName;
+import com.sun.org.apache.bcel.internal.classfile.Unknown;
 import org.jetbrains.annotations.Nullable;
 
 import java.text.DecimalFormat;
@@ -58,28 +59,38 @@ public class Reward {
             if (this.getPackageKey().contains("emote") || this.getPackageKey().contains("taunt"))
                 return t.getOrDefault("vanity." + this.getRewardKey(), "Unknown vanity (emote/taunt) item");
         }
-        if(this.getAmount() != null) {
+        if (this.getAmount() != null) {
             return this.getAmountFormatted() + " " + t.getOrDefault("type." + this.getRewardKey(), "Unknown ").replace("{$game}", this.getGameName());
         }
         return t.getOrDefault("type." + getRewardKey(), "");
     }
 
     public String getDescription(HashMap<String, String> t) {
-        if(this.getRewardKey().equals("add_vanity")) {
-            if(this.getRewardKey().contains("suit")) return t.getOrDefault("vanity.suits.description", "Unknown translation for " + this.getPackageKey());
-            if(this.getRewardKey().contains("emote")) return t.getOrDefault("vanity.emotes.description", "Unknown translation for " + this.getPackageKey());
-            if(this.getRewardKey().contains("taunt")) return t.getOrDefault("vanity.gestures.description", "Unknown translation for " + this.getPackageKey());
+        if (this.getRewardKey().equals("add_vanity")) {
+            if (this.getRewardKey().contains("suit"))
+                return t.getOrDefault("vanity.suits.description", "Unknown translation for " + this.getPackageKey());
+            if (this.getRewardKey().contains("emote"))
+                return t.getOrDefault("vanity.emotes.description", "Unknown translation for " + this.getPackageKey());
+            if (this.getRewardKey().contains("taunt"))
+                return t.getOrDefault("vanity.gestures.description", "Unknown translation for " + this.getPackageKey());
         }
-        if(this.getRewardKey().equals("tokens") || this.getRewardKey().equals("coins")) {
+        if (this.getRewardKey().equals("tokens") || this.getRewardKey().equals("coins")) {
             return t.getOrDefault("type." + this.getRewardKey() + ".description", "Unknown translation for reward " + this.getRewardKey()).replace("{$game}", this.getGameName());
         }
+        if (this.getRewardKey().equals("housing_package")) {
+            return t.getOrDefault("type." + this.getRewardKey(), "Unknown housing item") + ": " +
+                    t.getOrDefault("housing.skull." + (this.getPackageKey() != null ? this.getPackageKey()
+                            .replace("specialoccasion_reward_card_skull_", "") : ""), "Unknown housing package") +
+                    " (" + t.getOrDefault("type." + this.getRewardKey() + ".description", " Unknown translation for reward " + this.getRewardKey()) + ")";
+        }
+
         return t.getOrDefault("type." + this.getRewardKey() + ".description", "Unknown translation for reward " + this.getRewardKey());
     }
 
     public String getRarityColor() {
         switch (this.rarity) {
             case COMMON:
-                return "§f";
+                return "§7";
             case RARE:
                 return "§b";
             case EPIC:

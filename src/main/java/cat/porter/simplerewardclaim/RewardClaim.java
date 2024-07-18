@@ -3,6 +3,7 @@ package cat.porter.simplerewardclaim;
 import cat.porter.simplerewardclaim.types.Data;
 import cat.porter.simplerewardclaim.types.Reward;
 import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
 import net.minecraft.event.ClickEvent;
 import net.minecraft.event.HoverEvent;
 import net.minecraft.util.ChatComponentText;
@@ -14,7 +15,6 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.net.*;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -40,23 +40,34 @@ public class RewardClaim {
                 conn.setDoOutput(true);
                 conn.connect();
 
-                if (conn.getResponseCode() != 200)
+                if (conn.getResponseCode() != 200) {
+                    Utils.chat("§c[RewardClaim] There was an error fetching the rewards. Response Code: " + conn.getResponseCode());
                     throw new Exception("Invalid response code: " + conn.getResponseCode());
+                }
                 BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
                 String inputLine;
                 StringBuilder response = new StringBuilder();
                 while ((inputLine = in.readLine()) != null) response.append(inputLine);
                 in.close();
 
-                if(response.toString().contains("This link either never existed or has already expired.")) throw new Exception("This reward link has expired.");
+                if(response.toString().contains("\"error\":\"This link either never existed or has already expired.\"")) {
+                    Utils.chat("§c[RewardClaim] This reward link has either expired or been used.");
+                    throw new Exception("This reward link has expired.");
+                }
 
                 Matcher dataMatcher = DATA_REGEX.matcher(response.toString());
-                if (!dataMatcher.find()) throw new Exception("Failed to find data.");
+                if (!dataMatcher.find()) {
+                    Utils.chat("§c[RewardClaim] There was an error finding the rewards in the web request. Contact the developer if this persists.");
+                    throw new Exception("Failed to find data. Response: " + response.toString());
+                }
                 String appData = dataMatcher.group("data");
 
 
                 Matcher translationMatcher = TRANSLATION_REGEX.matcher(response.toString());
-                if (!translationMatcher.find()) throw new Exception("Failed to find translations.");
+                if (!translationMatcher.find()) {
+                    Utils.chat("§c[RewardClaim] There was an error finding the translations in the web request. Contact the developer if this persists.");
+                    throw new Exception("Failed to find translations. Response: " + response.toString());
+                }
                 String translationsData = translationMatcher.group("translations");
 
                 HashMap<String, String> translations = new HashMap<>();
@@ -65,18 +76,24 @@ public class RewardClaim {
                     translations.put(translationLineMatcher.group("key"), translationLineMatcher.group("text"));
                 }
 
-                if(translations.size() < 10) throw new Exception("Failed to parse translations. " + translations.size() + " translations found.");
+                if(translations.size() < 10) {
+                    Utils.chat("§c[RewardClaim] There was an error recording the translations in the web request. Contact the developer if this persists.");
+                    throw new Exception("Failed to parse translations. " + translations.size() + " translations found.");
+                }
 
                 Data data = GSON.fromJson(appData, Data.class);
 
                 Matcher crsfMatcher = SECURITY_REGEX.matcher(response.toString());
-                if (!crsfMatcher.find()) throw new Exception("Failed to find CSRF token.");
+                if (!crsfMatcher.find()) {
+                    Utils.chat("§c[RewardClaim] There was an error finding the security code in the web request. Contact the developer if this persists.");
+                    throw new Exception("Failed to find CSRF token.");
+                }
                 String crsfToken = crsfMatcher.group("token");
 
                 data.setCsrfToken(crsfToken);
-                SimpleRewardClaim.LOGGER.debug("Rewards for id " + rewardId + ": " + String.join(", ", data.getRewards().stream().map(reward -> reward.getDisplayName(translations)).toArray(String[]::new)));
+                SimpleRewardClaim.LOGGER.info("Rewards for id " + rewardId + ": " + String.join(", ", data.getRewards().stream().map(reward -> reward.getDisplayName(translations)).toArray(String[]::new)));
 
-                ChatComponentText base = new ChatComponentText("Daily Reward: ");
+                ChatComponentText base = new ChatComponentText("§aDaily Rewards:§r ");
 
                 for (int i = 0; i < data.getRewards().size(); i++) {
                     Reward reward = data.getRewards().get(i);
@@ -101,8 +118,17 @@ public class RewardClaim {
                 currentSession = data;
                 SimpleRewardClaim.SESSION = this;
             } catch (Exception e) {
-                if (e instanceof MalformedURLException) System.err.println("Invalid reward URL.");
+                if (e instanceof MalformedURLException) {
+                    SimpleRewardClaim.LOGGER.error("Invalid reward URL.");
+                    return;
+                }
+                if(e instanceof JsonSyntaxException) {
+                    SimpleRewardClaim.LOGGER.error("Failed to parse JSON");
+                    Utils.chat("§c[RewardClaim] There was an error reading the rewards from the Hypixel.");
+                    return;
+                }
                 SimpleRewardClaim.LOGGER.error(e.getMessage());
+                Utils.chat("§c[RewardClaim] There was an error fetching the rewards. " + (e.getMessage().length() > 80 ? e.getMessage().substring(0, 80) : e.getMessage()) + "...");
             }
         };
     }
@@ -111,13 +137,15 @@ public class RewardClaim {
         return () -> {
             if(currentSession == null) throw new IllegalStateException("No session found.");
             try {
-                URL submission = new URL("https://rewards.hypixel.net/claim-reward/claim?option=" + selected + "&id=" + currentSession.getId() + "&activeAd=" + 0 + "&_csrf=" + currentSession.getCsrfToken() + "&watchedFallback=false");
+                int selected2 = 1;
+                URL submission = new URL("https://rewards.hypixel.net/claim-reward/claim?option=" + selected2 + "&id=" + currentSession.getId() + "&activeAd=" + 0 + "&_csrf=" + currentSession.getCsrfToken() + "&watchedFallback=false");
                 HttpURLConnection submitConn = (HttpURLConnection) submission.openConnection();
                 submitConn.setRequestMethod("POST");
                 submitConn.setRequestProperty("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36");
                 submitConn.setUseCaches(true);
                 submitConn.setDoOutput(true);
                 CookieManager.setDefault(null);
+                Utils.chat("§b[RewardClaim] Claiming reward " + selected + ".");
                 submitConn.connect();
                 if (submitConn.getResponseCode() != 200) {
                     BufferedReader in = new BufferedReader(new InputStreamReader(submitConn.getInputStream()));
@@ -133,6 +161,7 @@ public class RewardClaim {
                 StringWriter sw = new StringWriter();
                 e.printStackTrace(new PrintWriter(sw));
                 SimpleRewardClaim.LOGGER.error(sw.toString());
+
             }
         };
     }

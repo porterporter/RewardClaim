@@ -1,4 +1,4 @@
-package org.polyfrost.example.types;
+package cat.porter.simplerewardclaim.types;
 
 public class DailyStreak {
     private int value;

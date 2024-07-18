@@ -99,7 +99,7 @@ public class RewardClaim {
                     Reward reward = data.getRewards().get(i);
 
                     ChatStyle style = new ChatStyle()
-                            .setChatClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/claim reward " + i))
+                            .setChatClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/claim reward " + (i + 1)))
                             .setChatHoverEvent(new HoverEvent(
                                     HoverEvent.Action.SHOW_TEXT,
                                     new ChatComponentText("Click click here to claim " + reward.getDescription(translations))));
@@ -137,8 +137,7 @@ public class RewardClaim {
         return () -> {
             if(currentSession == null) throw new IllegalStateException("No session found.");
             try {
-                int selected2 = 1;
-                URL submission = new URL("https://rewards.hypixel.net/claim-reward/claim?option=" + selected2 + "&id=" + currentSession.getId() + "&activeAd=" + 0 + "&_csrf=" + currentSession.getCsrfToken() + "&watchedFallback=false");
+                URL submission = new URL("https://rewards.hypixel.net/claim-reward/claim?option=" + selected + "&id=" + currentSession.getId() + "&activeAd=" + 0 + "&_csrf=" + currentSession.getCsrfToken() + "&watchedFallback=false");
                 HttpURLConnection submitConn = (HttpURLConnection) submission.openConnection();
                 submitConn.setRequestMethod("POST");
                 submitConn.setRequestProperty("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36");
@@ -153,6 +152,7 @@ public class RewardClaim {
                     StringBuilder response = new StringBuilder();
                     while ((inputLine = in.readLine()) != null) response.append(inputLine);
                     in.close();
+                    Utils.chat("§c[RewardClaim] There was an error claiming the rewards. Response Code: " + submitConn.getResponseCode());
                     throw new Exception("Invalid response code: " + submitConn.getResponseCode() + "\n" + response);
                 }
             } catch (Exception e) {
@@ -161,7 +161,6 @@ public class RewardClaim {
                 StringWriter sw = new StringWriter();
                 e.printStackTrace(new PrintWriter(sw));
                 SimpleRewardClaim.LOGGER.error(sw.toString());
-
             }
         };
     }

@@ -1,14 +1,14 @@
 [
   {
-    "modid": "gravyrewardclaim",
-    "name": "Gravy's Reward Claim",
-    "description": "Allows you to claim Hypixel rewards in-game.",
+    "modid": "${id}",
+    "name": "${name}",
+    "description": "",
     "version": "${version}",
-    "mcversion": "${mcversion}",
+    "mcversion": "${mcVersionStr}",
     "url": "",
     "updateUrl": "",
     "authorList": [
-      ""
+      "Your Name"
     ],
     "credits": "",
     "logoFile": "",

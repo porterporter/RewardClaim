@@ -1,4 +1,4 @@
-package tech.thatgravyboat.rewardclaim.ui
+package cat.porter.simplerewardclaim.ui
 
 import gg.essential.elementa.components.UIBlock
 import gg.essential.elementa.components.UIImage

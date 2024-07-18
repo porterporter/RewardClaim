@@ -1,4 +1,4 @@
-package tech.thatgravyboat.rewardclaim
+package cat.porter.simplerewardclaim
 
 import gg.essential.api.EssentialAPI
 import gg.essential.api.commands.Command

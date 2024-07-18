@@ -1,4 +1,4 @@
-package tech.thatgravyboat.rewardclaim.types
+package cat.porter.simplerewardclaim.types
 
 import gg.essential.universal.ChatColor
 import java.awt.Color

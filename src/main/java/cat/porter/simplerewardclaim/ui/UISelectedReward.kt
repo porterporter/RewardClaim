@@ -1,4 +1,4 @@
-package tech.thatgravyboat.rewardclaim.ui
+package cat.porter.simplerewardclaim.ui
 
 import gg.essential.elementa.components.UIBlock
 import gg.essential.elementa.components.UIImage
@@ -11,10 +11,10 @@ import gg.essential.elementa.effects.OutlineEffect
 import gg.essential.elementa.utils.withAlpha
 import gg.essential.universal.ChatColor
 import gg.essential.vigilance.gui.VigilancePalette
-import tech.thatgravyboat.rewardclaim.ExternalConfiguration
-import tech.thatgravyboat.rewardclaim.MappedImageCache
-import tech.thatgravyboat.rewardclaim.types.RewardData
-import tech.thatgravyboat.rewardclaim.types.RewardLanguage
+import cat.porter.simplerewardclaim.ExternalConfiguration
+import cat.porter.simplerewardclaim.MappedImageCache
+import cat.porter.simplerewardclaim.types.RewardData
+import cat.porter.simplerewardclaim.types.RewardLanguage
 
 class UISelectedReward(middle: XConstraint) : UIBlock(VigilancePalette.getHighlight().withAlpha(204)) {
 

@@ -1,19 +1,19 @@
-package tech.thatgravyboat.rewardclaim.types
+package cat.porter.simplerewardclaim.types
 
 import com.google.gson.annotations.SerializedName
-import tech.thatgravyboat.rewardclaim.ExternalConfiguration
+import cat.porter.simplerewardclaim.ExternalConfiguration
 import java.util.*
 
 private val ARMOR_REGEX = Regex("(^[a-z0-9_]+)_([a-z]+)$", RegexOption.IGNORE_CASE)
 
 data class RewardData(
-    val rarity: RewardRarity,
-    private val reward: String,
-    val amount: Int?,
-    val intlist: Array<Int>?,
-    private val gameType: GameMode?,
-    @SerializedName("package") private val rewardPackage: String?,
-    @SerializedName("key") private val rewardKey: String?
+        val rarity: RewardRarity,
+        private val reward: String,
+        val amount: Int?,
+        val intlist: Array<Int>?,
+        private val gameType: GameMode?,
+        @SerializedName("package") private val rewardPackage: String?,
+        @SerializedName("key") private val rewardKey: String?
 ) {
 
     fun getDisplayName(language: RewardLanguage): String {

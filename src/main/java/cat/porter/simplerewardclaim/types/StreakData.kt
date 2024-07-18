@@ -1,4 +1,4 @@
-package tech.thatgravyboat.rewardclaim.types
+package cat.porter.simplerewardclaim.types
 
 import com.google.gson.annotations.SerializedName
 

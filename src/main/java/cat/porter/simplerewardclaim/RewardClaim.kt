@@ -1,4 +1,4 @@
-package tech.thatgravyboat.rewardclaim
+package cat.porter.simplerewardclaim
 
 import gg.essential.api.EssentialAPI
 import net.minecraft.client.gui.GuiScreenBook
@@ -9,7 +9,7 @@ import net.minecraftforge.fml.common.Mod
 import net.minecraftforge.fml.common.event.FMLInitializationEvent
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent
-import tech.thatgravyboat.rewardclaim.ui.RewardClaimGui
+import cat.porter.simplerewardclaim.ui.RewardClaimGui
 
 @Mod(
     name = "RewardClaim",

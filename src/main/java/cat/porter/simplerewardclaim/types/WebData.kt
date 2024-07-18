@@ -1,4 +1,4 @@
-package tech.thatgravyboat.rewardclaim.types
+package cat.porter.simplerewardclaim.types
 
 import com.google.gson.Gson
 
@@ -29,11 +29,11 @@ class WebData(security: MatchResult, data: MatchResult, i18n: MatchResult) {
     }
 
     private data class JsonWebData(
-        val rewards: List<RewardData>,
-        val dailyStreak: StreakData,
-        val activeAd: Int,
-        val ad: AdData,
-        val skippable: Boolean
+            val rewards: List<RewardData>,
+            val dailyStreak: StreakData,
+            val activeAd: Int,
+            val ad: AdData,
+            val skippable: Boolean
     )
 
 }

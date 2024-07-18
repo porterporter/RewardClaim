@@ -1,4 +1,4 @@
-package tech.thatgravyboat.rewardclaim.types
+package cat.porter.simplerewardclaim.types
 
 @Suppress("unused")
 enum class GameMode(val displayName: String) {

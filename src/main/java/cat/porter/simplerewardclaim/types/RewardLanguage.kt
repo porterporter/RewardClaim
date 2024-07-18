@@ -1,4 +1,4 @@
-package tech.thatgravyboat.rewardclaim.types
+package cat.porter.simplerewardclaim.types
 
 private val TRANSLATION_LINE_REGEX = Regex("\"(?<key>.*)\": ?\"(?<text>.*)\",?")
 

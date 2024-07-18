@@ -1,4 +1,4 @@
-package tech.thatgravyboat.rewardclaim.ui
+package cat.porter.simplerewardclaim.ui
 
 import gg.essential.api.utils.Multithreading.runAsync
 import gg.essential.api.utils.Multithreading.schedule
@@ -10,9 +10,9 @@ import gg.essential.universal.ChatColor
 import gg.essential.universal.UDesktop
 import gg.essential.vigilance.gui.VigilancePalette
 import org.apache.commons.io.IOUtils
-import tech.thatgravyboat.rewardclaim.Config
-import tech.thatgravyboat.rewardclaim.ExternalConfiguration
-import tech.thatgravyboat.rewardclaim.types.WebData
+import cat.porter.simplerewardclaim.Config
+import cat.porter.simplerewardclaim.ExternalConfiguration
+import cat.porter.simplerewardclaim.types.WebData
 import java.awt.Color
 import java.net.*
 import java.nio.charset.Charset

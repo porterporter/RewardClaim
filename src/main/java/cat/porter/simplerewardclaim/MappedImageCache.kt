@@ -1,4 +1,4 @@
-package tech.thatgravyboat.rewardclaim
+package cat.porter.simplerewardclaim
 
 import gg.essential.elementa.components.image.ImageCache
 import java.awt.image.BufferedImage

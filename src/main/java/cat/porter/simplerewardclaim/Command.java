@@ -4,8 +4,6 @@ import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.util.BlockPos;
-import org.polyfrost.example.ExampleMod;
-import org.polyfrost.example.Utils;
 
 import java.util.List;
 
@@ -33,11 +31,11 @@ public class Command extends CommandBase {
                     Utils.chat("Invalid reward selection.");
                     return;
                 }
-                if (ExampleMod.SESSION == null) {
+                if (SimpleRewardClaim.SESSION == null) {
                     Utils.chat("No session found.");
                     return;
                 }
-                new Thread(ExampleMod.SESSION.claim(selection)).start();
+                new Thread(SimpleRewardClaim.SESSION.claim(selection)).start();
                 break;
             default:
                 Utils.chat("Invalid command usage.");

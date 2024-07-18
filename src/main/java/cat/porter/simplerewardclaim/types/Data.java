@@ -1,4 +1,5 @@
 package cat.porter.simplerewardclaim.types;
+
 import java.util.List;
 
 public class Data {

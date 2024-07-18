@@ -1,16 +1,18 @@
 package cat.porter.simplerewardclaim;
 
+import cat.porter.simplerewardclaim.types.Data;
+import cat.porter.simplerewardclaim.types.Reward;
 import com.google.gson.Gson;
 import net.minecraft.event.ClickEvent;
 import net.minecraft.event.HoverEvent;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.ChatStyle;
 import net.minecraft.util.IChatComponent;
-import org.polyfrost.example.types.Data;
-import org.polyfrost.example.types.Reward;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.net.*;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -72,7 +74,7 @@ public class RewardClaim {
                 String crsfToken = crsfMatcher.group("token");
 
                 data.setCsrfToken(crsfToken);
-                ExampleMod.LOGGER.debug("Rewards for id " + rewardId + ": " + String.join(", ", data.getRewards().stream().map(reward -> reward.getDisplayName(translations)).toArray(String[]::new)));
+                SimpleRewardClaim.LOGGER.debug("Rewards for id " + rewardId + ": " + String.join(", ", data.getRewards().stream().map(reward -> reward.getDisplayName(translations)).toArray(String[]::new)));
 
                 ChatComponentText base = new ChatComponentText("Daily Reward: ");
 
@@ -97,16 +99,17 @@ public class RewardClaim {
                 Utils.chat(base);
 
                 currentSession = data;
-                ExampleMod.SESSION = this;
+                SimpleRewardClaim.SESSION = this;
             } catch (Exception e) {
                 if (e instanceof MalformedURLException) System.err.println("Invalid reward URL.");
-                ExampleMod.LOGGER.error(e.getMessage());
+                SimpleRewardClaim.LOGGER.error(e.getMessage());
             }
         };
     }
 
     public Runnable claim(int selected) {
         return () -> {
+            if(currentSession == null) throw new IllegalStateException("No session found.");
             try {
                 URL submission = new URL("https://rewards.hypixel.net/claim-reward/claim?option=" + selected + "&id=" + currentSession.getId() + "&activeAd=" + 0 + "&_csrf=" + currentSession.getCsrfToken() + "&watchedFallback=false");
                 HttpURLConnection submitConn = (HttpURLConnection) submission.openConnection();
@@ -125,10 +128,11 @@ public class RewardClaim {
                     throw new Exception("Invalid response code: " + submitConn.getResponseCode() + "\n" + response);
                 }
             } catch (Exception e) {
-                ExampleMod.LOGGER.error(e);
-                ExampleMod.LOGGER.error(e.getMessage());
-                ExampleMod.LOGGER.error(String.join(" ", Arrays.stream(e.getStackTrace()).map(StackTraceElement::toString).toArray(String[]::new)));
-
+                SimpleRewardClaim.LOGGER.error(e);
+                SimpleRewardClaim.LOGGER.error(e.getMessage());
+                StringWriter sw = new StringWriter();
+                e.printStackTrace(new PrintWriter(sw));
+                SimpleRewardClaim.LOGGER.error(sw.toString());
             }
         };
     }

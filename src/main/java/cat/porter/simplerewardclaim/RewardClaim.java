@@ -20,14 +20,14 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class RewardClaim {
-    private final Pattern DATA_REGEX = Pattern.compile("window\\.appData = '(?<data>\\{.*})';");
-    private final Pattern TRANSLATION_REGEX = Pattern.compile("window.i18n = \\{(?<translations>.*)};", Pattern.DOTALL);
-    private final Pattern TRANSLATION_LINE_REGEX = Pattern.compile("\"(?<key>.*)\": ?\"(?<text>.*)\",?");
-    private final Pattern SECURITY_REGEX = Pattern.compile("window\\.securityToken = \"(?<token>.*)\";");
-    private final Gson GSON = new Gson();
-    private Data currentSession;
+    private static final Pattern DATA_REGEX = Pattern.compile("window\\.appData = '(?<data>\\{.*})';");
+    private static final Pattern TRANSLATION_REGEX = Pattern.compile("window.i18n = \\{(?<translations>.*)};", Pattern.DOTALL);
+    private static final Pattern TRANSLATION_LINE_REGEX = Pattern.compile("\"(?<key>.*)\": ?\"(?<text>.*)\",?");
+    private static final Pattern SECURITY_REGEX = Pattern.compile("window\\.securityToken = \"(?<token>.*)\";");
+    private static final Gson GSON = new Gson();
+    private static Data SESSION;
 
-    public Runnable fetch(String rewardId) {
+    public static Runnable fetch(String rewardId) {
         return () -> {
             try {
                 CookieManager cookieManager = new CookieManager();
@@ -115,8 +115,7 @@ public class RewardClaim {
 
                 Utils.chat(base);
 
-                currentSession = data;
-                SimpleRewardClaim.SESSION = this;
+                RewardClaim.SESSION = data;
             } catch (Exception e) {
                 if (e instanceof MalformedURLException) {
                     SimpleRewardClaim.LOGGER.error("Invalid reward URL.");
@@ -133,11 +132,14 @@ public class RewardClaim {
         };
     }
 
-    public Runnable claim(int selected) {
+    public static Runnable claim(int selected) {
         return () -> {
-            if(currentSession == null) throw new IllegalStateException("No session found.");
+            if(SESSION == null) {
+                Utils.chat("§No Daily Reward Session found. Try: /claim id <id> first");
+                throw new IllegalStateException("No session found.");
+            }
             try {
-                URL submission = new URL("https://rewards.hypixel.net/claim-reward/claim?option=" + selected + "&id=" + currentSession.getId() + "&activeAd=" + 0 + "&_csrf=" + currentSession.getCsrfToken() + "&watchedFallback=false");
+                URL submission = new URL("https://rewards.hypixel.net/claim-reward/claim?option=" + (selected - 1) + "&id=" + SESSION.getId() + "&activeAd=" + 0 + "&_csrf=" + SESSION.getCsrfToken() + "&watchedFallback=false");
                 HttpURLConnection submitConn = (HttpURLConnection) submission.openConnection();
                 submitConn.setRequestMethod("POST");
                 submitConn.setRequestProperty("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36");

@@ -27,7 +27,7 @@ public class Command extends CommandBase {
                     Utils.chat("§cMissing arguments. Usage: /claim id <id>");
                     return;
                 }
-                new Thread(new RewardClaim().fetch(args[1])).start();
+                new Thread(RewardClaim.fetch(args[1])).start();
                 break;
             case "reward":
                 if(args.length < 2) {
@@ -40,11 +40,7 @@ public class Command extends CommandBase {
                     Utils.chat("§cInvalid reward. Usage: /claim reward <1|2|3>");
                     return;
                 }
-                if (SimpleRewardClaim.SESSION == null) {
-                    Utils.chat("§No Daily Reward Session found. Try: /claim id <id> first");
-                    return;
-                }
-                new Thread(SimpleRewardClaim.SESSION.claim(selection)).start();
+                new Thread(RewardClaim.claim(selection)).start();
                 break;
             default:
                 Utils.chat("§Missing arguments. Usage: /claim <id|reward>");

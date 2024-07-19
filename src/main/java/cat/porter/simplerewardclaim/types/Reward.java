@@ -1,7 +1,6 @@
 package cat.porter.simplerewardclaim.types;
 
 import com.google.gson.annotations.SerializedName;
-import com.sun.org.apache.bcel.internal.classfile.Unknown;
 import org.jetbrains.annotations.Nullable;
 
 import java.text.DecimalFormat;

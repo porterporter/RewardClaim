@@ -126,8 +126,10 @@ public class RewardClaim {
                     Utils.chat("§c[RewardClaim] There was an error reading the rewards from the Hypixel.");
                     return;
                 }
-                SimpleRewardClaim.LOGGER.error(e.getMessage());
-                Utils.chat("§c[RewardClaim] There was an error fetching the rewards. " + (e.getMessage().length() > 80 ? e.getMessage().substring(0, 80) : e.getMessage()) + "...");
+                Utils.chat("§c[RewardClaim] There was an error fetching the rewards from the rewards.hypixel.net");
+                e.printStackTrace();
+                SimpleRewardClaim.LOGGER.error("Exception: " + e);
+                SimpleRewardClaim.LOGGER.error("An error occurred fetching rewards selection from rewards.hypixel.net");
             }
         };
     }
@@ -158,11 +160,11 @@ public class RewardClaim {
                     throw new Exception("Invalid response code: " + submitConn.getResponseCode() + "\n" + response);
                 }
             } catch (Exception e) {
-                SimpleRewardClaim.LOGGER.error(e);
-                SimpleRewardClaim.LOGGER.error(e.getMessage());
-                StringWriter sw = new StringWriter();
-                e.printStackTrace(new PrintWriter(sw));
-                SimpleRewardClaim.LOGGER.error(sw.toString());
+                Utils.chat("§c[RewardClaim] There was an error fetching the rewards from the rewards.hypixel.net");
+                SimpleRewardClaim.LOGGER.error("User selection: " + selected + " (API: " + (selected - 1) + ").");
+                e.printStackTrace();
+                SimpleRewardClaim.LOGGER.error("Exception: " + e);
+                SimpleRewardClaim.LOGGER.error("An error occurred submitting daily reward selection to rewards.hypixel.net");
             }
         };
     }

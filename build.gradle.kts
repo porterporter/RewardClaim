@@ -77,12 +77,6 @@ dependencies {
 
     // Adds DevAuth, which we can use to log in to Minecraft in development.
     modRuntimeOnly("me.djtheredstoner:DevAuth-${if (platform.isFabric) "fabric" else if (platform.isLegacyForge) "forge-legacy" else "forge-latest"}:1.2.0")
-
-    // If we are building for legacy forge, includes the launch wrapper with `shade` as we configured earlier, as well as mixin 0.7.11
-//    if (platform.isLegacyForge) {
-//        compileOnly("org.spongepowered:mixin:0.7.11-SNAPSHOT")
-//        shade("cc.polyfrost:oneconfig-wrapper-launchwrapper:1.0.0-beta17")
-//    }
 }
 
 tasks {
@@ -91,18 +85,8 @@ tasks {
     processResources {
         inputs.property("id", mod_id)
         inputs.property("name", mod_name)
-        val java = if (project.platform.mcMinor >= 18) {
-            17 // If we are playing on version 1.18, set the java version to 17
-        } else {
-            // Else if we are playing on version 1.17, use java 16.
-            if (project.platform.mcMinor == 17)
-                16
-            else
-                8 // For all previous versions, we **need** java 8 (for Forge support).
-        }
-        val compatLevel = "JAVA_${java}"
-        inputs.property("java", java)
-        inputs.property("java_level", compatLevel)
+        inputs.property("java", 8)
+        inputs.property("java_level", "JAVA_8")
         inputs.property("version", mod_version)
         inputs.property("mcVersionStr", project.platform.mcVersionStr)
         filesMatching(listOf("mcmod.info", "mixins.${mod_id}.json", "mods.toml")) {
@@ -110,8 +94,8 @@ tasks {
                     mapOf(
                             "id" to mod_id,
                             "name" to mod_name,
-                            "java" to java,
-                            "java_level" to compatLevel,
+                            "java" to 8,
+                            "java_level" to "JAVA_8",
                             "version" to mod_version,
                             "mcVersionStr" to project.platform.mcVersionStr
                     )
@@ -123,7 +107,7 @@ tasks {
                             "id" to mod_id,
                             "name" to mod_name,
                             "java" to java,
-                            "java_level" to compatLevel,
+                            "java_level" to "JAVA_8",
                             "version" to mod_version,
                             "mcVersionStr" to project.platform.mcVersionStr.substringBeforeLast(".") + ".x"
                     )
@@ -133,24 +117,17 @@ tasks {
 
     // Configures the resources to include if we are building for forge or fabric.
     withType(Jar::class.java) {
-        if (project.platform.isFabric) {
-            exclude("mcmod.info", "mods.toml")
-        } else {
-            exclude("fabric.mod.json")
-            if (project.platform.isLegacyForge) {
-                exclude("mods.toml")
-            } else {
-                exclude("mcmod.info")
-            }
-        }
+        exclude("fabric.mod.json")
+        exclude("mods.toml")
     }
 
-    // Configures our shadow/shade configuration, so we can
-    // include some dependencies within our mod jar file.
+//     Configures our shadow/shade configuration, so we can
+//     include some dependencies within our mod jar file.
     named<ShadowJar>("shadowJar") {
         archiveClassifier.set("dev")
         configurations = listOf(shade, modShade)
         duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+        destinationDirectory.set(layout.buildDirectory.dir("dev"))
     }
 
     remapJar {

@@ -7,7 +7,7 @@
 * Select latest commit, jar is in artifacts zip.
 
 ### Screenshots:
-![screenshot.PNG](src/main/resources/screenshot.png)
+![screenshot.PNG](src/main/resources/screenshot.PNG)
 
 ### Contributing:
 1. `git clone https://github.com/porterporter/OrangeJuice.git`

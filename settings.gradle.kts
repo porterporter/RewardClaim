@@ -22,15 +22,15 @@ pluginManagement {
 
     plugins {
         kotlin("jvm") version("2.0.0")
-        id("dev.deftu.gradle.multiversion-root") version("2.12.0")
+        id("dev.deftu.gradle.multiversion-root") version("2.14.0")
     }
 }
 
 
-val mod_name: String by settings
-
+val projectName: String = extra["mod.name"]?.toString()
+        ?: throw MissingPropertyException("mod.name has not been set.")
 // Configures the root project Gradle name based on the value in `gradle.properties`
-rootProject.name = mod_name
+rootProject.name = projectName
 rootProject.buildFileName = "root.gradle.kts"
 
 // Adds all of our build target versions to the classpath if we need to add version-specific code.

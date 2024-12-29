@@ -13,18 +13,13 @@ plugins {
     id("dev.deftu.gradle.tools.minecraft.loom")
 }
 
-val mod_name: String by project
-val mod_version: String by project
-val mod_id: String by project
-val mod_archives_name: String by project
+loom {
+    log4jConfigs.from(file("${projectDir}/log4j2.xml")) // doesn't work
+}
 
 toolkitLoomHelper {
     useDevAuth()
-    log4jConfigs.from(file("log4j2.xml")) // doesn't work
 
-
-    // Removes the server configs from IntelliJ IDEA, leaving only client runs.
-    // If you're developing a server-side mod, you can remove this line.
     disableRunConfigs(GameSide.SERVER)
 
     useMixinRefMap(modData.id)
@@ -48,4 +43,12 @@ repositories {
 dependencies {
     // If we are building for legacy forge, includes the launch wrapper with `shade` as we configured earlier.
     compileOnly("org.spongepowered:mixin:0.7.11-SNAPSHOT")
+}
+
+tasks.fatJar {
+    enabled = false
+}
+
+tasks.remapJar {
+    inputFile = file("build/devlibs/RewardClaim-1.0.1+1.8.9-forge-dev.jar")
 }

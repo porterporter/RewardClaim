@@ -36,14 +36,20 @@ jobs:
       - name: Set up JDK 21
         uses: actions/setup-java@v4
         with:
-          distribution: 'temurin'
-          java-version: '21'
+          distribution: temurin
+          java-version: 21
           cache: 'gradle'
-          cache-dependency-path: | # optional
+
+      - uses: actions/cache@v4
+        with:
+          path: |
             ~/.gradle/caches
             ~/.gradle/wrapper
             **/loom-cache
             **/prebundled-jars
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
 
       - name: Chmod Gradle
         run: chmod +x ./gradlew

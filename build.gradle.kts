@@ -14,7 +14,7 @@ plugins {
 }
 
 loom {
-    log4jConfigs.from(file("${projectDir}/log4j2.xml")) // doesn't work
+    log4jConfigs.from(file("${rootDir}/log4j2.xml")) // doesn't work
 }
 
 toolkitLoomHelper {
@@ -23,7 +23,6 @@ toolkitLoomHelper {
     disableRunConfigs(GameSide.SERVER)
 
     useMixinRefMap(modData.id)
-    useTweaker("org.polyfrost.oneconfig.internal.legacy.OneConfigTweaker", GameSide.CLIENT)
     useForgeMixin(modData.id) // Configures the mixins if we are building for forge, useful for when we are dealing with cross-platform projects.
 }
 
@@ -34,21 +33,11 @@ sourceSets {
     }
 }
 
-// Adds the Polyfrost maven repository so that we can get the libraries necessary to develop the mod.
-repositories {
-    maven("https://repo.polyfrost.org/releases")
-}
-
-// Configures the libraries/dependencies for your mod.
-dependencies {
-    // If we are building for legacy forge, includes the launch wrapper with `shade` as we configured earlier.
-    compileOnly("org.spongepowered:mixin:0.7.11-SNAPSHOT")
-}
-
 tasks.fatJar {
     enabled = false
 }
 
 tasks.remapJar {
-    inputFile = file("build/devlibs/RewardClaim-1.0.1+1.8.9-forge-dev.jar")
+    // TODO: change this to something that works more flexibly
+    inputFile = file("build/devlibs/${modData.name}-${modData.version}+1.8.9-forge-dev.jar")
 }

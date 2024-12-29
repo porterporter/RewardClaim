@@ -1,21 +1,33 @@
-@file:Suppress("PropertyName")
+import groovy.lang.MissingPropertyException
 
 pluginManagement {
     repositories {
+        // Repositories
+        maven("https://maven.deftu.dev/releases")
+        maven("https://maven.fabricmc.net")
+        maven("https://maven.architectury.dev/")
+        maven("https://maven.minecraftforge.net")
+        maven("https://repo.essential.gg/repository/maven-public")
+
+        // Snapshots
+        maven("https://maven.deftu.dev/snapshots")
+
+        // Default repositories
         gradlePluginPortal()
         mavenCentral()
-        maven("https://repo.polyfrost.org/releases") // Adds the Polyfrost maven repository to get Polyfrost Gradle Toolkit
     }
+
     plugins {
-        val pgtVersion = "0.6.5" // Sets the default versions for Polyfrost Gradle Toolkit
-        id("org.polyfrost.multi-version.root") version pgtVersion
+        kotlin("jvm") version("2.0.0")
+        id("dev.deftu.gradle.multiversion-root") version("2.14.0")
     }
 }
 
-val mod_name: String by settings
 
+val projectName: String = extra["mod.name"]?.toString()
+        ?: throw MissingPropertyException("mod.name has not been set.")
 // Configures the root project Gradle name based on the value in `gradle.properties`
-rootProject.name = mod_name
+rootProject.name = projectName
 rootProject.buildFileName = "root.gradle.kts"
 
 // Adds all of our build target versions to the classpath if we need to add version-specific code.
